@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/sha1"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -17,13 +18,28 @@ var (
 	directoryExistenceMap = make(map[string]bool)
 )
 
+func setupFlags() {
+	flag.IntVar(&workerCount, "worker", 5, "The number of green threads to use for downloading")
+	flag.Usage = func() {
+		out := flag.CommandLine.Output()
+		fmt.Fprintf(out, "%s:\n  A simple utility to download files in parallel\n\n", os.Args[0])
+		fmt.Fprintln(out, "Usage:")
+		fmt.Fprintf(out, "  %s [options] <url-list-file>\n\n", os.Args[0])
+		fmt.Fprintln(out, "Options:")
+		flag.PrintDefaults()
+	}
+}
+
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("you need to provide the list file, dumbass")
+	setupFlags()
+	flag.Parse()
+	args := flag.Args()
+	if len(args) < 2 {
+		flag.Usage()
 		return
 	}
 
-	filename := os.Args[1]
+	filename := args[1]
 
 	file, err := os.Open(filename)
 	if err != nil {
