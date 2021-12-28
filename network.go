@@ -9,6 +9,14 @@ import (
 	"os"
 )
 
+var (
+	httpClient = &http.Client{}
+)
+
+func GetClient() *http.Client {
+	return httpClient
+}
+
 func netCopy(fromUrl, toFile string) error {
 	status, length, rangesAllowed, unit, err := checkoutUrl(fromUrl)
 	if err != nil {
@@ -34,7 +42,6 @@ func netCopy(fromUrl, toFile string) error {
 
 func rangedDownload(w io.Writer, fromUrl string, length int64) error {
 	downloaded := int64(0)
-	client := &http.Client{}   // we dont need to create a client
 	for downloaded != length { // maybe the infinite download bug is caused by this equality test
 		req, err := http.NewRequest(http.MethodGet, fromUrl, nil)
 		if err != nil {
@@ -42,7 +49,7 @@ func rangedDownload(w io.Writer, fromUrl string, length int64) error {
 		}
 		req.Header.Set("Range", fmt.Sprintf("bytes=%d-", downloaded))
 
-		resp, err := client.Do(req) // use http.DO instead
+		resp, err := GetClient().Do(req)
 		if err != nil {
 			return err
 		}
@@ -58,7 +65,7 @@ func rangedDownload(w io.Writer, fromUrl string, length int64) error {
 }
 
 func plainDownload(w io.Writer, fromUrl string) error {
-	resp, err := http.Get(fromUrl)
+	resp, err := GetClient().Get(fromUrl)
 	if err != nil {
 		return err
 	}
