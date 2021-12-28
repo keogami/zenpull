@@ -53,13 +53,13 @@ func rangedDownload(w io.Writer, fromUrl string, length int64) error {
 		if err != nil {
 			return err
 		}
+		defer resp.Body.Close()
 
 		more, err := io.Copy(w, resp.Body)
 		if err != nil {
 			fmt.Println("err:", err, "; more:", more) // for debugging, in case i see it again
 		}
 		downloaded += more
-		resp.Body.Close() // use defer instead of closing it here
 	}
 	return nil
 }
