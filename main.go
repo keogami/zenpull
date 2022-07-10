@@ -7,19 +7,24 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
+	"runtime/pprof"
 	"sync"
 )
 
 var (
 	workerCount           = 5
 	directoryExistenceMap = make(map[string]bool)
+  memprofile            = ""
 )
 
 func setupFlags() {
 	flag.IntVar(&workerCount, "worker", 5, "The number of green threads to use for downloading")
+  flag.StringVar(&memprofile, "memprofile", "", "the destination file for the memory profile date")
 	flag.Usage = func() {
 		out := flag.CommandLine.Output()
 		fmt.Fprintf(out, "%s:\n  A simple utility to download files in parallel\n\n", os.Args[0])
@@ -62,6 +67,18 @@ func main() {
 	wg.Wait()
 
 	fmt.Println("done <3")
+
+  if memprofile != "" {
+    f, err := os.Create(memprofile)
+    if err != nil {
+        log.Fatal("could not create memory profile: ", err)
+    }
+    defer f.Close() // error handling omitted for example
+    runtime.GC() // get up-to-date statistics
+    if err := pprof.WriteHeapProfile(f); err != nil {
+        log.Fatal("could not write memory profile: ", err)
+    }
+  }
 }
 
 func dispatch(from io.Reader) <-chan string {
