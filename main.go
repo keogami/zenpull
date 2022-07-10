@@ -34,12 +34,13 @@ func main() {
 	setupFlags()
 	flag.Parse()
 	args := flag.Args()
-	if len(args) < 2 {
+	if len(args) < 1 {
+    fmt.Printf("no list file specified.\n\n")
 		flag.Usage()
 		return
 	}
 
-	filename := args[1]
+	filename := args[0]
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -95,7 +96,7 @@ func mkdirIfRequired(p string) {
 		directoryExistenceMap[p] = true
 		return
 	}
-	os.Mkdir(p, 0666)
+	os.Mkdir(p, 0700)
 	directoryExistenceMap[p] = true
 }
 
