@@ -32,7 +32,7 @@ func netCopy(fromUrl, toFile string) error {
 		return err
 	}
 	defer dest.Close()
-	bdest := bufio.NewWriter(dest)
+	bdest := bufio.NewWriterSize(dest, 1024 * 1024 *2)
 
 	if length != 0 && rangesAllowed && unit == "bytes" {
 		return rangedDownload(bdest, fromUrl, length)
