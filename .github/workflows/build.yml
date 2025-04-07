@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p dist
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/zenpull-${{ matrix.goos }}-${{ matrix.goarch }}
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/zenpull-${{ matrix.goos }}-${{ matrix.goarch }} main.go
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -53,21 +53,10 @@ jobs:
         with:
           path: dist
 
-      - name: Get latest tag
-        id: get_tag
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            git fetch --tags
-            TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-            echo "tag_name=$TAG" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag_name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          tag_name: ${{ github.ref_name }}
           files: dist/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
