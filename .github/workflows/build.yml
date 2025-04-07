@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p dist
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/zenpull-${{ matrix.goos }}-${{ matrix.goarch }} main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/zenpull-${{ matrix.goos }}-${{ matrix.goarch }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
