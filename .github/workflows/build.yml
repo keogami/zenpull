@@ -18,12 +18,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version: '1.17'
 
       - name: Build
         run: |
           mkdir -p dist
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/myapp-${{ matrix.goos }}-${{ matrix.goarch }} main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/zenpull-${{ matrix.goos }}-${{ matrix.goarch }} main.go
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
