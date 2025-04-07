@@ -62,6 +62,7 @@ jobs:
             echo "tag_name=$TAG" >> "$GITHUB_OUTPUT"
           else
             echo "tag_name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
